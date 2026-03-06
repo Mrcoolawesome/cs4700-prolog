@@ -22,7 +22,7 @@ solveRooms(Castle, L) :-
 traverse(_Castle, exit, [], [exit]) :-
   true. % we did it if we made it here
 
-% recursive case 1 for helper: if the next room matches the head of our list
+% recursive case 1 for helper: if the current room matches the head of our list
 traverse(Castle, CurrentRoom, GivenList, [CurrentRoom | PathTail]) :-
   % find a connected room that matches the head item of our list
   room(Castle, CurrentRoom, NextRoom, _Cost),
@@ -33,12 +33,12 @@ traverse(Castle, CurrentRoom, GivenList, [CurrentRoom | PathTail]) :-
   % since we found a match keep recursing starting from that room and also remove the current room from the list
   traverse(Castle, NextRoom, NewGivenList, PathTail). % we keep on adding to the return list by continuing to add to the head of its tail, thus adding them from left to right in the list
 
-% recursive case 2 for helper: if the next room doesn't match the first item in the list
+% recursive case 2 for helper: if the current room doesn't match the first item in the list
 traverse(Castle, CurrentRoom, GivenList, [CurrentRoom | PathTail]) :-
   % find a connected room
   room(Castle, CurrentRoom, NextRoom, _Cost),
 
-  % make sure that the next room doesn't equal any of the elements in the given list
+  % make sure that the current room doesn't equal any of the elements in the given list
   \+ memberOfX(CurrentRoom, GivenList),
 
   % keep recursing starting on the next room, and keep the given list as is
