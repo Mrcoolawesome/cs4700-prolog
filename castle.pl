@@ -38,7 +38,7 @@ traverse(Castle, CurrentRoom, GivenList, [CurrentRoom | PathTail]) :-
   room(Castle, CurrentRoom, NextRoom, Cost),
 
   % make sure that the next room doesn't equal any of the elements in the given list
-  \+ member(CurrentRoom, GivenList),
+  \+ memberOfX(CurrentRoom, GivenList),
 
   % keep recursing starting on the next room, and keep the given list as is
   traverse(Castle, NextRoom, GivenList, PathTail).
@@ -48,6 +48,11 @@ traverse(Castle, CurrentRoom, [], [CurrentRoom | PathTail]) :-
   room(Castle, CurrentRoom, NextRoom, Cost),
   traverse(Castle, NextRoom, [], PathTail).
 
-% Add your comments here
+% helper to determine if an element is a member of a list
+memberOfX(X, [X | _]). % base case, if X is the head of the array then that means we found it 
+memberOfX(X, [_|Tail]) :- 
+	memberOfX(X, Tail).
+
+% this will determine if a 
 solveRoomsWithinCost(Castle, Limit) :- 
   printList(NL).
