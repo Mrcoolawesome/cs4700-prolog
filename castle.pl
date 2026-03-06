@@ -9,6 +9,7 @@ printList([Head | Tail]) :-
   writeln(Head),
   printList(Tail).
 
+% SOLVE ROOMS SECTION
 % this will determine if, given a list of rooms, if you can get from entry to exit using all those rooms along the path
 solveRooms(Castle, L) :-
   % use the helper to traverse through the tree starting at the start node
@@ -50,9 +51,42 @@ traverse(Castle, CurrentRoom, [], [CurrentRoom | PathTail]) :-
 
 % helper to determine if an element is a member of a list
 memberOfX(X, [X | _]). % base case, if X is the head of the array then that means we found it 
+% otherwise, keep recursing until we hit the base case
 memberOfX(X, [_|Tail]) :- 
 	memberOfX(X, Tail).
 
-% this will determine if a 
+% SOLVE ROOMS WITH COST SECTION
+% this will determine if some path exists from the entry to the exit, whose weight is under or equal to the cost limit
 solveRoomsWithinCost(Castle, Limit) :- 
-  printList(NL).
+  % run the traversal starting at the start room and with the given limit
+  traverseWithCost(Castle, enter, Limit, Limit, PathList),
+  printList(PathList). % print the path that was taken
+
+% helper for finding if a path exists that's under the limit
+% base case: if we made it to the end check if the path was under the limit 
+% prolog will just traverse every path on its own through the recursion in the recursive case so i just need to specify what paths i do want to return true for
+traverseWithCost(Castle, exit, Limit, OriginalLimit, [exit]) :- % also put the exit into the return list
+  Limit >= 0, % make sure its remaning limit is greater than 0
+
+  % calculate what we spent
+  Spent is OriginalLimit - Limit,
+
+  % printout how much we spent and the limit (i don't think this is required but it's displayed in his test cases so i'm going to do it)
+  format('Cost is ~w with limit of ~w~n', [Spent, OriginalLimit]).
+
+% recursive case 1: find the next room that sums the path weight to still be under the limit
+traverseWithCost(Castle, CurrentRoom, Limit, OriginalLimit, [CurrentRoom | PathTail]) :-
+  % stop looping if we've hit an exit
+  CurrentRoom \= exit,
+
+  % get one of the next rooms connected to the current room
+  room(Castle, CurrentRoom, NextRoom, Cost), 
+
+  % calculate the remaining cost
+  NewLimit is Limit - Cost, 
+
+  % check if we still have enough cost left
+  NewLimit >= 0,
+
+  % keep recursing and keep recording the path
+  traverseWithCost(Castle, NextRoom, NewLimit, OriginalLimit, PathTail).
